@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user;
+
+service User {
+  rpc SignupOtp(SignupOtpRequest) returns (SignupOtpResponse);
+}
+
+message SignupOtpRequest {
+  string email = 1;
+  string name = 2;
+}
+
+message SignupOtpResponse {
+  string message = 1;
+}
+
