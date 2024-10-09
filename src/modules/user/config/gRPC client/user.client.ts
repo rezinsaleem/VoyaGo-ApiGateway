@@ -16,7 +16,7 @@ const grpcObject = grpc.loadPackageDefinition(packageDef) as any;
 const Domain = process.env.NODE_ENV === 'dev' ? process.env.DEV_DOMAIN : process.env.PRO_DOMAIN_USER;
 
 const UserService = new grpcObject.user.User(
-  `${Domain}:${process.env.USER_GRPC_PORT}`, grpc.credentials.createInsecure()
+  `${Domain}:${process.env.USER_GRPC_PORT}`, grpc.credentials.createInsecure(),
 );
 
 export { UserService };
