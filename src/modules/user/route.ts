@@ -10,5 +10,6 @@ userRoute.post('/signupOtp',controller.signupOtp);
 userRoute.post('/resendOtp', controller.resendOtp);
 userRoute.post('/registerUser', controller.registerUser);
 userRoute.post('/loginUser', controller.loginUser);
+userRoute.post('/googleLoginUser', controller.googleLoginUser);
 
 export default userRoute;

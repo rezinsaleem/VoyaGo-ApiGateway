@@ -85,4 +85,25 @@ loginUser = (req: Request, res: Response) => {
   }
 };
 
+googleLoginUser = (req: Request, res: Response) => {
+  try {
+    UserService.GoogleLoginUser(
+      req.body,
+      (err: any, result: AuthResponse) => {
+        if (err) {
+          console.log(err);
+          res.status(StatusCode.BadRequest).json({ message: err });
+        } else {
+          res.status(StatusCode.Created).json(result);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
 };
