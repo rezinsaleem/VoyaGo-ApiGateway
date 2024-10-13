@@ -68,4 +68,21 @@ registerUser = async (req: Request, res: Response) => {
   }
 };
 
+loginUser = (req: Request, res: Response) => {
+  try {
+    UserService.LoginUser(req.body, (err: any, result: AuthResponse) => {
+      if (err) {
+        res.status(StatusCode.BadRequest).json({ message: err });
+      } else {
+        res.status(StatusCode.Created).json(result);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
 };
