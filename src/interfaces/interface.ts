@@ -10,3 +10,10 @@ export interface AuthResponse {
   mobile: string;
   isVerified: string;
 }
+
+export interface AdminAuthResponse {
+  message: string;
+  name: string;
+  token: string;
+}
+

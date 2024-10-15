@@ -4,6 +4,7 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import userRoute from "./modules/user/route";
+import adminRoute from './modules/admin/route';
 
 class App {
   public app: Application;
@@ -29,6 +30,7 @@ class App {
 
   private routes(): void {
     this.app.use("/api/user", userRoute);
+    this.app.use('/api/admin', adminRoute);
   }
 
   public startServer(port: number): void {

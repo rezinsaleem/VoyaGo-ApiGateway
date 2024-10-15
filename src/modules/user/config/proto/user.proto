@@ -8,6 +8,14 @@ service User {
   rpc ResendOtp(SignupOtpRequest) returns (SignupOtpResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
   rpc GoogleLoginUser(GoogleLoginUserRequest) returns (GoogleLoginUserResponse);
+
+  rpc AdminLogin(LoginUserRequest) returns (LoginAdminRespone);
+}
+
+message LoginAdminRespone {
+  string message = 1;
+  string name = 2;
+  string token = 3;
 }
 
 message GoogleLoginUserRequest {
