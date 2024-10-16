@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../interfaces/enum";
 import { UserService } from "./config/gRPC client/user.client";
-import { AuthResponse } from "../../interfaces/interface";
+import { AuthResponse, UpdateUser } from "../../interfaces/interface";
+import uploadToS3 from "../../services/s3";
 
 
 export default class userController {
@@ -103,6 +104,50 @@ googleLoginUser = (req: Request, res: Response) => {
     res
       .status(StatusCode.InternalServerError)
       .json({ message: 'Internal Server Error' });
+  }
+};
+
+updateUser = async (req: Request, res: Response) => {
+  try {
+    const files: Express.Multer.File | undefined = req.file;
+    let userImage = '';
+    if (files) {
+      userImage = await uploadToS3(files);
+      console.log(userImage);
+    }
+    const {id} = req.params
+    UserService.UpdateUser({...req.body,userImage, id}, (err: any, result: {user: UpdateUser}) => {
+      if (err) {
+        res.status(StatusCode.BadRequest).json({ message: err });
+      } else {
+        console.log(result);
+        res.status(StatusCode.Created).json(result);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
+changePassword = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.params
+    const {currentPassword, newPassword} = req.body
+    UserService.ChangePassword({id, currentPassword, newPassword}, (err: any, result: { message: string}) => {
+      if (err) {
+        return res.status(StatusCode.BadRequest).json({ message: err.message });
+      }
+      if (result) { 
+        return res.status(StatusCode.OK).json(result); 
+      }
+      return res.status(StatusCode.NotFound).json({ message: 'UserNotFound' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
   }
 };
 

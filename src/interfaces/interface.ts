@@ -17,3 +17,10 @@ export interface AdminAuthResponse {
   token: string;
 }
 
+export interface UpdateUser {
+  message: string;
+  name: string;
+  phoneNumber: number;
+  userImage: string;
+}
+
