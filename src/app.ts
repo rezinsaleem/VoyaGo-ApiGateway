@@ -3,6 +3,9 @@ import "dotenv/config";
 import http from "http";
 import express from "express";
 import cors from "cors";
+import compression from 'compression';
+import helmet from 'helmet';
+import { limiter } from './utils/rateLimit';
 import userRoute from "./modules/user/route";
 import adminRoute from './modules/admin/route';
 
@@ -25,7 +28,10 @@ class App {
         credentials: true,
       })
     );
+    this.app.use(compression());
+    this.app.use(helmet());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(limiter);
   }
 
   private routes(): void {

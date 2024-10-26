@@ -24,6 +24,7 @@ async function uploadToS3(file: Express.Multer.File) {
 
   const command = new PutObjectCommand(params);
 
+
   try {
     await s3.send(command);
     return params.Key;

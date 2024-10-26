@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import userController from './controller';
 import upload from '../../middlewares/multer';
+import { isValidated } from '../auth/controller';
 
 
 const controller = new userController()
@@ -13,7 +14,7 @@ userRoute.post('/registerUser', controller.registerUser);
 userRoute.post('/loginUser', controller.loginUser);
 userRoute.post('/googleLoginUser', controller.googleLoginUser);
 
-userRoute.post('/updateProfile/:id', upload.single('userImage'), controller.updateUser)
-userRoute.post('/changePassword/:id',controller.changePassword)
+userRoute.post('/updateProfile/:id', isValidated, upload.single('userImage'), controller.updateUser)
+userRoute.post('/changePassword/:id',isValidated, controller.changePassword)
 
 export default userRoute;
