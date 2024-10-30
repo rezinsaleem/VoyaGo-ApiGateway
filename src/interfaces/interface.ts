@@ -33,3 +33,16 @@ export interface UserCredentials {
   userId: string;
   role: string;
 }
+
+export interface User {
+  message: string;
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: number;
+  userImage: string;
+  password?: string;
+  accountStatus?: string;
+  createdAt?: Date;        
+  updatedAt?: Date;
+}
