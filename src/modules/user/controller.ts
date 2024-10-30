@@ -151,4 +151,64 @@ changePassword = async (req: Request, res: Response) => {
   }
 };
 
+forgotPassOtp = async (req: Request, res: Response) => {
+  try {
+    UserService.ForgotPassOtp(
+      req.body,
+      (err: any, result: { message: string }) => {
+        if (err) {
+          res.status(StatusCode.BadRequest).json({ message: err });
+        } else {
+          res.status(StatusCode.Created).json(result);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
+otpVerify = async (req: Request, res: Response) => {
+  try {
+    UserService.OtpVerify(
+      req.body,
+      (err: any, result: { message: string }) => {
+        if (err) {
+          res.status(StatusCode.BadRequest).json({ message: err });
+        } else {
+          res.status(StatusCode.Created).json(result);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
+updatePassword = async (req: Request, res: Response) => {
+  try {
+    UserService.UpdatePassword(
+      req.body,
+      (err: any, result: { message: string }) => {
+        if (err) {
+          res.status(StatusCode.BadRequest).json({ message: err });
+        } else {
+          res.status(StatusCode.Created).json(result);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+};
+
 };
