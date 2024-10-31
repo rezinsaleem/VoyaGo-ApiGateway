@@ -229,5 +229,28 @@ isBlocked = async (req: Request, res: Response) => {
   }
 };
 
+verifyUser = async (req: Request, res: Response) => {
+  try {
+    const files: Express.Multer.File | undefined = req.file;
+    let verifyDocument = '';
+    if (files) {
+      verifyDocument = await uploadToS3(files);
+    }
+    const {id} = req.params
+    UserService.VerifyUser({...req.body,verifyDocument, id}, (err: any, result: {message:string, isVerified:string}) => {
+      if (err) {
+        res.status(StatusCode.BadRequest).json({ message: err });
+      } else {
+        res.status(StatusCode.Created).json(result);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: 'Internal Server Error' });
+  }
+}
+
 
 };

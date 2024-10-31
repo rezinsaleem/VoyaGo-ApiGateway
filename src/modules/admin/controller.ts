@@ -59,4 +59,43 @@ export default class AdminController {
     }
   };
 
+  getUser  = async (req: Request, res: Response) => {
+    try {
+      const {id} = req.params
+      UserService.GetUser({id}, (err: any, result: { user: User}) => {
+        if (err) {
+          console.log(err)
+          return res.status(StatusCode.BadRequest).json({ message: err.message });
+        }
+        if (result) { 
+          return res.status(StatusCode.OK).json(result); 
+        }
+        return res.status(StatusCode.NotFound).json({ message: 'UserNotFound' });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+    }
+  };
+
+  userVerification = async (req: Request, res: Response) => {
+    try {
+      const {id} = req.params
+      UserService.userVerification({id, ...req.body}, (err: any, result: { message: string}) => {
+        if (err) {
+          console.log(err)
+          return res.status(StatusCode.BadRequest).json({ message: err.message });
+        }
+        if (result) { 
+          console.log(result)
+          return res.status(StatusCode.OK).json(result); 
+        }
+        return res.status(StatusCode.NotFound).json({ message: 'UserNotFound' });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+    }
+  };
+
 }

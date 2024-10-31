@@ -18,6 +18,7 @@ userRoute.post('/forgotPassOtp', controller.forgotPassOtp);
 userRoute.post('/otpVerify', controller.otpVerify);
 userRoute.post('/updatePassword', controller.updatePassword);
 userRoute.get('/isBlocked/:id', controller.isBlocked)
+userRoute.post('/verifyUser/:id', isValidated,upload.single('document'), controller.verifyUser)
 
 userRoute.post('/updateProfile/:id', isValidated, upload.single('userImage'), controller.updateUser)
 userRoute.post('/changePassword/:id',isValidated, controller.changePassword)

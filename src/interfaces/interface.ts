@@ -43,6 +43,12 @@ export interface User {
   userImage: string;
   password?: string;
   accountStatus?: string;
+  isVerified?: string;      
+  verificationDetails?: {
+    govIdType?: string;
+    govIdNumber?: string;
+    document?: string;
+  };
   createdAt?: Date;        
   updatedAt?: Date;
 }

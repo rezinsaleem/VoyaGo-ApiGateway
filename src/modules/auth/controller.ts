@@ -2,61 +2,60 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCode } from '../../interfaces/enum';
 import { Tokens, UserCredentials } from '../../interfaces/interface';
 import { AuthService } from './config/gRPC-client/auth.client';
-import AsyncHandler from "express-async-handler";
-
-
+import AsyncHandler from 'express-async-handler';
 
 export const isValidated = AsyncHandler(
-  (req: Request, res: Response, next: NextFunction) => {
-    try {  
-      const token = req.cookies?.token || req.headers.authorization?.trim().split(" ")[1];  
-      AuthService.IsAuthenticated({ token }, (err:any, result:UserCredentials) => {
+  (req: Request, res: Response, next: NextFunction): void => {
+    try {
+      const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+
+      if (!token) {
+        res.status(StatusCode.Unauthorized).json({ success: false, message: 'Token not provided' });
+        return;  // Explicitly return to stop execution
+      }
+
+      AuthService.IsAuthenticated({ token }, (err: any, result: UserCredentials) => {
         if (err) {
-          console.log(err.details);
-          res.status(StatusCode.Unauthorized).json({ success: false, message: err });
-        } else {
-          next();
+          console.error('Authentication Error:', err.details);
+          res.status(StatusCode.Unauthorized).json({ success: false, message: 'Unauthorized' });
+          return;  // Explicitly return to stop execution
         }
+        next();
       });
     } catch (error) {
-      console.log(error);
+      console.error('Validation Middleware Error:', error);
+      res.status(StatusCode.InternalServerError).json({ success: false, message: 'Internal Server Error' });
     }
   }
 );
 
-
-export const refreshToken = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const refreshToken = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const token =
       req.cookies?.refreshToken ||
-      req.headers.authorization?.trim().split(' ')[1] ||
+      req.headers.authorization?.split(' ')[1] ||
       req.body.token;
-    if (token) {
-      AuthService.RefreshToken({ token }, (err: any, result: Tokens) => {
-        if (err) {
-          console.log(err);
-          res
-            .status(StatusCode.NotAcceptable)
-            .json({ message: 'Invalid refresh token' });
-        } else { 
-          res
-            .status(StatusCode.Created)
-            .json({
-              success: true,
-              accesstoken: result?.access_token,
-              refreshToken: result?.refresh_token,
-              message: 'new token generated successfully',
-            });
-        }
-      });
-    } else {
-      res.status(StatusCode.Unauthorized).json({ message: 'Token is missing' });
+
+    if (!token) {
+      res.status(StatusCode.Unauthorized).json({ success: false, message: 'Token is missing' });
+      return;  // Explicitly return to stop execution
     }
+
+    AuthService.RefreshToken({ token }, (err: any, result: Tokens) => {
+      if (err) {
+        console.error('Refresh Token Error:', err);
+        res.status(StatusCode.NotAcceptable).json({ success: false, message: 'Invalid refresh token' });
+        return;  // Explicitly return to stop execution
+      }
+      res.status(StatusCode.Created).json({
+        success: true,
+        accessToken: result?.access_token,
+        refreshToken: result?.refresh_token,
+        message: 'New token generated successfully',
+      });
+    });
   } catch (error) {
-    console.log(error);
+    console.error('Refresh Middleware Error:', error);
+    res.status(StatusCode.InternalServerError).json({ success: false, message: 'Internal Server Error' });
   }
 };
