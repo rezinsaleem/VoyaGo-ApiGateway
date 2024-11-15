@@ -11,14 +11,14 @@ export const isValidated = AsyncHandler(
 
       if (!token) {
         res.status(StatusCode.Unauthorized).json({ success: false, message: 'Token not provided' });
-        return;  // Explicitly return to stop execution
+        return;  
       }
 
       AuthService.IsAuthenticated({ token }, (err: any, result: UserCredentials) => {
         if (err) {
           console.error('Authentication Error:', err.details);
           res.status(StatusCode.Unauthorized).json({ success: false, message: 'Unauthorized' });
-          return;  // Explicitly return to stop execution
+          return;  
         }
         next();
       });

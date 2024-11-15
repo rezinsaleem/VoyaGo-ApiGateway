@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import { limiter } from './utils/rateLimit';
 import userRoute from "./modules/user/route";
 import adminRoute from './modules/admin/route';
+import rideRoute from "./modules/ride/route";
 
 class App {
   public app: Application;
@@ -37,6 +38,7 @@ class App {
   private routes(): void {
     this.app.use("/api/user", userRoute);
     this.app.use('/api/admin', adminRoute);
+    this.app.use('/api/ride', rideRoute);
   }
 
   public startServer(port: number): void {
