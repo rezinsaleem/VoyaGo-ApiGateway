@@ -2,32 +2,56 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCode } from '../../interfaces/enum';
 import { Tokens, UserCredentials } from '../../interfaces/interface';
 import { AuthService } from './config/gRPC-client/auth.client';
-import AsyncHandler from 'express-async-handler';
+import expressAsyncHandler from 'express-async-handler';
 
-export const isValidated = AsyncHandler(
-  (req: Request, res: Response, next: NextFunction): void => {
+
+
+export const isValidated = (requiredRole: string) =>
+  expressAsyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      if (!res.headersSent) {
+        res.status(401).json({ success: false, message: 'Token not provided' });
+      }
+      return;
+    }
+
     try {
-      const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+      console.log('Calling AuthService with token:', token);
+      const user = await new Promise<any>((resolve, reject) => {
+        AuthService.IsAuthenticated({ token, requiredRole }, (error: any, response: any) => {
+          if (error) {
+            reject(error); // Reject the promise if there's an error
+          } else {
+            resolve(response); // Resolve the promise with the response
+          }
+        });
+      });
 
-      if (!token) {
-        res.status(StatusCode.Unauthorized).json({ success: false, message: 'Token not provided' });
-        return;  
+      console.log('AuthService response:', user);
+
+      // Check if user exists and their role matches the requiredRole
+      if (!user || user.role !== requiredRole) {
+        if (!res.headersSent) {
+          res.status(403).json({
+            success: false,
+            message: 'Forbidden: You do not have the required permissions',
+          });
+        }
+        return;
       }
 
-      AuthService.IsAuthenticated({ token }, (err: any, result: UserCredentials) => {
-        if (err) {
-          console.error('Authentication Error:', err.details);
-          res.status(StatusCode.Unauthorized).json({ success: false, message: 'Unauthorized' });
-          return;  
-        }
-        next();
-      });
+      // User is authenticated and authorized
+      next();
     } catch (error) {
-      console.error('Validation Middleware Error:', error);
-      res.status(StatusCode.InternalServerError).json({ success: false, message: 'Internal Server Error' });
+      console.error('Error during authentication in API Gateway:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+      }
     }
-  }
-);
+  });
+
 
 export const refreshToken = (req: Request, res: Response, next: NextFunction): void => {
   try {

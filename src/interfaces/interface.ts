@@ -52,3 +52,17 @@ export interface User {
   createdAt?: Date;        
   updatedAt?: Date;
 }
+
+
+export interface CustomUser {
+  userId: string;
+  role: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: CustomUser;
+    }
+  }
+}

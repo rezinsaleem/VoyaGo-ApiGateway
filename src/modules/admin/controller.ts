@@ -43,6 +43,7 @@ export default class AdminController {
     try {
       const {id} = req.params
       const {accountStatus} = req.body
+      console.log(id , accountStatus)
       UserService.BlockUser({id, accountStatus}, (err: any, result: { message: string}) => {
         if (err) {
           console.log(err)

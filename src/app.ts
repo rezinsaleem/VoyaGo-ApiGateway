@@ -9,6 +9,7 @@ import { limiter } from './utils/rateLimit';
 import userRoute from "./modules/user/route";
 import adminRoute from './modules/admin/route';
 import rideRoute from "./modules/ride/route";
+// import morgan from "morgan";
 
 class App {
   public app: Application;
@@ -22,10 +23,13 @@ class App {
   }
 
   private applyMiddleware(): void {
+
+    // this.app.use(morgan('combined'));
+  
     this.app.use(express.json({ limit: "50mb" }));
     this.app.use(
       cors({
-        origin: process.env.CORS_ORIGIN,
+        origin: process.env.CORS_ORIGIN, 
         credentials: true,
       })
     );

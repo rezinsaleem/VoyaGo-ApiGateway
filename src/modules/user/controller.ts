@@ -75,6 +75,7 @@ loginUser = (req: Request, res: Response) => {
       if (err) {
         res.status(StatusCode.BadRequest).json({ message: err });
       } else {
+        console.log(result)
         res.status(StatusCode.Created).json(result);
       }
     });
@@ -95,6 +96,7 @@ googleLoginUser = (req: Request, res: Response) => {
           console.log(err);
           res.status(StatusCode.BadRequest).json({ message: err });
         } else {
+          console.log(result);
           res.status(StatusCode.Created).json(result);
         }
       }
