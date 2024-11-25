@@ -18,20 +18,16 @@ export const isValidated = (requiredRole: string) =>
     }
 
     try {
-      console.log('Calling AuthService with token:', token);
       const user = await new Promise<any>((resolve, reject) => {
         AuthService.IsAuthenticated({ token, requiredRole }, (error: any, response: any) => {
           if (error) {
-            reject(error); // Reject the promise if there's an error
+            reject(error); 
           } else {
-            resolve(response); // Resolve the promise with the response
+            resolve(response); 
           }
         });
       });
 
-      console.log('AuthService response:', user);
-
-      // Check if user exists and their role matches the requiredRole
       if (!user || user.role !== requiredRole) {
         if (!res.headersSent) {
           res.status(403).json({
@@ -66,17 +62,13 @@ export const refreshToken = (req: Request, res: Response, next: NextFunction): v
     }
 
     AuthService.RefreshToken({ token }, (err: any, result: Tokens) => {
+      console.log(result);
       if (err) {
         console.error('Refresh Token Error:', err);
         res.status(StatusCode.NotAcceptable).json({ success: false, message: 'Invalid refresh token' });
         return;  // Explicitly return to stop execution
       }
-      res.status(StatusCode.Created).json({
-        success: true,
-        accessToken: result?.access_token,
-        refreshToken: result?.refresh_token,
-        message: 'New token generated successfully',
-      });
+      res.status(StatusCode.Created).json(result);
     });
   } catch (error) {
     console.error('Refresh Middleware Error:', error);

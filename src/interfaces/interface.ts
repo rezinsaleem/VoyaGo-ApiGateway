@@ -66,3 +66,24 @@ declare global {
     }
   }
 }
+
+export interface RidePlan {
+  start_address: string;
+  end_address: string;
+  routeName: string;
+  distance: string;
+  duration: string;
+  numSeats: number;
+  rideDate: string;
+  rideTime: string;
+  pricePerSeat: number;
+  car: string;
+  additionalInfo: string;
+  passengers: Passenger[];
+}
+
+interface Passenger {
+  id: number;
+  name: string;
+  phoneNumber: number,
+}

@@ -10,6 +10,7 @@ import userRoute from "./modules/user/route";
 import adminRoute from './modules/admin/route';
 import rideRoute from "./modules/ride/route";
 // import morgan from "morgan";
+import authRoute from "./modules/auth/route";
 
 class App {
   public app: Application;
@@ -43,6 +44,7 @@ class App {
     this.app.use("/api/user", userRoute);
     this.app.use('/api/admin', adminRoute);
     this.app.use('/api/ride', rideRoute);
+    this.app.use('/api/auth', authRoute)
   }
 
   public startServer(port: number): void {

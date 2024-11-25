@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../interfaces/enum";
 import { RideService } from "./config/gRPC-client/auth.ride";
+import { RidePlan } from "../../interfaces/interface";
 
 
 export default class rideController{
@@ -28,6 +29,25 @@ export default class rideController{
       res
         .status(StatusCode.InternalServerError)
         .json({ message: "Internal Server Error" });
+    }
+  };
+
+  getRide  = async (req: Request, res: Response) => {
+    try {
+      const {id} = req.params
+      RideService.GetRide({id}, (err: any, result: { ride:RidePlan}) => {
+        if (err) {
+          console.log(err)
+          return res.status(StatusCode.BadRequest).json({ message: err.message });
+        }
+        if (result) { 
+          return res.status(StatusCode.OK).json(result); 
+        }
+        return res.status(StatusCode.NotFound).json({ message: 'RideNotFound' });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
     }
   };
 
