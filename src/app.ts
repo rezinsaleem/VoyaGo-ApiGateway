@@ -9,7 +9,7 @@ import { limiter } from './utils/rateLimit';
 import userRoute from "./modules/user/route";
 import adminRoute from './modules/admin/route';
 import rideRoute from "./modules/ride/route";
-// import morgan from "morgan";
+import morgan from "morgan";
 import authRoute from "./modules/auth/route";
 
 class App {
@@ -25,7 +25,7 @@ class App {
 
   private applyMiddleware(): void {
 
-    // this.app.use(morgan('combined'));
+    this.app.use(morgan('combined'));
   
     this.app.use(express.json({ limit: "50mb" }));
     this.app.use(

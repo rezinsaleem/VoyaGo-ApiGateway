@@ -21,6 +21,12 @@ service User {
   rpc GetUsers(Empty) returns (GetUsersResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc UserVerification(UserVerificationRequest) returns (SignupOtpResponse);
+
+  rpc GetUsersByRides(GetUsersByRidesRequest) returns (GetUsersResponse);
+}
+
+message GetUsersByRidesRequest {
+  repeated string riderIds = 1;
 }
 
 message UserVerificationRequest {
