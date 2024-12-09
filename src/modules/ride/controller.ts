@@ -3,6 +3,7 @@ import { StatusCode } from "../../interfaces/enum";
 import { RideService } from "./config/gRPC-client/auth.ride";
 import { RidePlan,  SearchRidesResponse } from "../../interfaces/interface";
 import { UserService } from "../user/config/gRPC client/user.client";
+import Razorpay from "razorpay";
 
 interface LocationData {
   address: string;
@@ -108,6 +109,96 @@ export default class rideController{
     } catch (error) {
       console.error('Unexpected error:', error);
       res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+    }
+  };
+
+  payment = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { amount, currency } = req.body;
+      const instance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_3TxK9TdVgtd1BD',
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+      });
+      const options = {
+        amount:parseInt(amount, 10),
+        currency,
+        receipt: 'order_' + id,
+      };
+      const order = await instance.orders.create(options);
+      if (!order)
+        res
+          .status(StatusCode.InternalServerError)
+          .json({ message: 'Internal Server Error' });
+      res.json(order);
+    } catch (error) {
+      console.error(error);
+      res
+        .status(StatusCode.InternalServerError)
+        .json({ message: 'Internal Server Error' });
+    }
+  };
+
+  paymentSuccess = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const {
+        amount,
+        paymentType,
+        paymentId,
+        passengerName,
+        passengerId,
+        passengerPhone,
+        passengerImage,
+        passengerEmail,
+        riderId,
+        riderName,
+        riderEmail,
+        riderPhone,
+      } = req.body;
+  
+      // Call RideService.PaymentSuccess with a callback
+      RideService.PaymentSuccess(
+        {
+          paymentId,
+          id,
+          amount,
+          paymentType,
+          passengerName,
+          passengerId,
+          passengerPhone,
+          passengerImage,
+          passengerEmail,
+          riderId,
+          riderName,
+          riderEmail,
+          riderPhone,
+        },
+        (err: any, result: { message: string }) => {
+          if (err) {
+            // If there's an error, send a response and return to prevent further execution
+            return res
+              .status(StatusCode.BadRequest)
+              .json({ message: err.message });
+          }
+  
+          if (result) {
+            // If there's a successful result, send a response and return
+            return res.status(StatusCode.OK).json(result);
+          }
+  
+          // If neither err nor result is present, send a "Not Found" response
+          return res
+            .status(StatusCode.NotFound)
+            .json({ message: 'Ride Not Available' });
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      // Catch block for any other unexpected errors
+      res
+        .status(StatusCode.InternalServerError)
+        .json({ message: 'Internal Server Error' });
     }
   };
   

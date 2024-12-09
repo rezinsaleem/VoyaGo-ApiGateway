@@ -89,6 +89,7 @@ interface Passenger {
 }
 
 interface SearchRides {
+  _id: string;
   riderDetails: any;
   start_lat: number;
   start_lng: number;
