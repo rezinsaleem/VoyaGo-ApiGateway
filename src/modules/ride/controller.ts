@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../interfaces/enum";
-import { RideService } from "./config/gRPC-client/auth.ride";
 import { RidePlan,  SearchRidesResponse } from "../../interfaces/interface";
 import { UserService } from "../user/config/gRPC client/user.client";
 import Razorpay from "razorpay";
+import { RideService } from "./config/gRPC-client/auth.ride";
 
 interface LocationData {
   address: string;
@@ -199,6 +199,27 @@ export default class rideController{
       res
         .status(StatusCode.InternalServerError)
         .json({ message: 'Internal Server Error' });
+    }
+  };
+
+  cancelRide = async (req: Request, res: Response) => {
+    try {
+      const {id} = req.params;
+      console.log(id)
+      RideService.CancelRide({id}, (err: any, result: { message: string}) => {
+        if (err) {
+          console.log(err)
+          return res.status(StatusCode.BadRequest).json({ message: err.message });
+        }
+        if (result) { 
+          console.log(result,'vann');
+          return res.status(StatusCode.OK).json(result); 
+        }
+        return res.status(StatusCode.NotFound).json({ message: 'RideNotFound' });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
     }
   };
   

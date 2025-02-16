@@ -14,5 +14,6 @@ rideRoute.post('/search-rides',controller.searchRides);
 
 rideRoute.post('/payment/:id', isValidated('user'), controller.payment)
 rideRoute.post('/paymentSuccess/:id', isValidated('user'), controller.paymentSuccess)
+rideRoute.put('/cancelRide/:id', isValidated('user'), controller.cancelRide)
 
 export default rideRoute;

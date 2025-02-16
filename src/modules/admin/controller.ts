@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCode } from "../../interfaces/enum";
 import { UserService } from "../user/config/gRPC client/user.client";
-import { AdminAuthResponse, User } from '../../interfaces/interface';
+import { AdminAuthResponse, Rides, User } from '../../interfaces/interface';
+import { RideService } from '../ride/config/gRPC-client/auth.ride';
+
 
 export default class AdminController {
   adminLogin = (req: Request, res: Response) => {
@@ -98,5 +100,24 @@ export default class AdminController {
       res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
     }
   };
+
+  getRides = async (req: Request, res: Response) => {
+    try {
+      RideService.GetRides({}, (err: any, result: { rides: Rides[] }) => {
+        if (err) {
+          return res.status(StatusCode.BadRequest).json({ message: err.message });
+        }
+        if (result) { 
+          console.log(result.rides);
+          return res.status(StatusCode.OK).json(result.rides); 
+        }
+        return res.status(StatusCode.NotFound).json({ message: 'NoRidesFound' });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(StatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+    }
+  };
+ 
 
 }

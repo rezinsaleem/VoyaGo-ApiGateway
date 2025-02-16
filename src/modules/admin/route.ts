@@ -13,4 +13,7 @@ adminRoute.put('/users/:id/block-unblock', isValidated('admin'), controller.user
 adminRoute.get('/getUser/:id', isValidated('admin'), controller.getUser)
 adminRoute.post('/user/:id/verification', isValidated('admin'), controller.userVerification)
 
+adminRoute.get('/getRides',isValidated('admin'), controller.getRides)
+
+
 export default adminRoute;

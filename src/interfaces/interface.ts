@@ -88,6 +88,18 @@ interface Passenger {
   phoneNumber: number,
 }
 
+export interface Rides{
+  _id: string;
+  start_address: string;
+  end_address: string;
+  numSeats: number;
+  rideDate: string;
+  rideTime: string;
+  pricePerSeat: number;
+  riderId : string;
+  passengers: Passenger[];
+}
+
 interface SearchRides {
   _id: string;
   riderDetails: any;
